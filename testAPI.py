@@ -35,7 +35,10 @@ class TestAPI(TestCase):
 		params = {"name": "Idan", "emailAddress": "idan@hovav.com"}
 		receivedResponse = requests.post(serverURL + "/account/create", data=params)
 		print(receivedResponse.text)
-		self.assertTrue(receivedResponse.text)
+		responseJson = receivedResponse.json()
+		newAccountID = responseJson["newAccountID"]
+		print("AccountID: %s " % newAccountID)
+		self.assertTrue(newAccountID)
 
 if __name__ == '__main__':
 	if len(sys.argv) == 2:
