@@ -40,14 +40,29 @@ def getAccountInfo(accountID):
 	accountInfo = {"accountID" : account.AccountID, "name": account.name, "emailAddress": account.email}
 	return json.jsonify(accountInfo)
 
+# TODO: add better auth for trip creation
 @tripSquadAPI.route('/trip/create', methods=["POST"])
 def createTrip():
-	requestJson = request.get_json()
+	expectedParams = ["creatorAccountID", "accountPassword", "tripName", "tripMemberAccountIDs"]
+	if not utils.hasExpectedParams(expectedParams, request):
+		tripSquadAPI.logger.error("createTrip -- Required params not found in request")
+		abort(400)
 
-	if "tripName" not in requestJson or "accountIDs" not in requestJson:
-		return json.jsonify("404 must include 'tripName' and 'accountIDs'")
+	requestParams = request.values
+	creatorAccountID = requestParams["creatorAccountID"]
+	creatorPassword = requestParams["creatorPassword"]
+	if not Account.validateAccount(creatorAccountID, creatorPassword):
+		tripSquadAPI.logger.error("createTrip -- %s User not validated" % creatorAccountID)
+		abort(400)
+	tripName = requestParams["tripName"]
+	tripMemberAccountIDs = requestParams["tripMemberAccountIDs"]
+	newTrip = Trip.Trip(tripMemberAccountIDs, tripName=tripName)
 
-	return json.jsonify("create trip endpoint")
+	if not Trip.getTripByID(newTrip.TripID):
+		tripSquadAPI.logger.error("createTrip -- failure in db insertion")
+		abort(500)
+	response = {"tripID": newTrip.TripID}
+	return json.jsonify(response)
 
 @tripSquadAPI.route('/trip/<tripID>/addPurchase', methods=["POST"])
 def addPurchase(tripID):
