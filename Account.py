@@ -19,3 +19,10 @@ def getAccountByID(AccountID):
 		return db.accountsByID[AccountID]
 	else:
 		return None
+
+def validateAccount(AccountID, password):
+	account = getAccountByID(AccountID)
+	if account and account.password:
+		return account.password == password
+
+	return False
