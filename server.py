@@ -9,10 +9,13 @@ def homePage():
 
 @tripSquadAPI.route('/account/create', methods=["POST"])
 def createAccount():
-
+	requestJson = request.get_json()
+	if "name" not in requestJson or "emailAddress" not in requestJson:
+		return json.jsonify("404 must include 'name' and 'emailAddress'")
+ 
 	return json.jsonify("create Account endpoint.")
 
-@tripSquadAPI.route('/account/<accountID>', methods=["POST"])
+@tripSquadAPI.route('/account/<accountID>')
 def getAccountInfo(accountID):
 
 	return json.jsonify("account info endpoint")
@@ -22,7 +25,7 @@ def createTrip():
 	requestJson = request.get_json()
 
 	if "tripName" not in requestJson or "accountIDs" not in requestJson:
-		return json.jsonify("400 must include trip name and accountIDs")
+		return json.jsonify("404 must include 'tripName' and 'accountIDs'")
 
 	return json.jsonify("create trip endpoint")
 
