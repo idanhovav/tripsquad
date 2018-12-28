@@ -1,0 +1,7 @@
+One account per person. An account must have a name and email address. The email address must be unique. Upon creation of an account, an account will be given a GUID and the person associated with the account will be prompted for a password. The password will be hashed and stored.
+
+A trip consists of one or more people (squad) and a set of purchases. Each purchase must be made by one person on the trip. 
+
+A purchase consists of a person and a dollar amount, and represents a purchase made by that person for that given dollar amount. Purchases can optionally have a tag, description, and are given a timestamp
+
+
