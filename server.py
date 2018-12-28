@@ -1,6 +1,8 @@
 from flask import Flask, json, abort, request
 
-import Account, Trip, Purchase, db
+import Account, Trip, Purchase
+
+import db, utils
 
 tripSquadAPI = Flask(__name__)
 
@@ -11,11 +13,12 @@ def homePage():
 
 @tripSquadAPI.route('/account/create', methods=["POST"])
 def createAccount():
-	requestParams = request.values
-	if "name" not in requestParams or "emailAddress" not in requestParams:
+	expectedParams = ["name", "emailAddress"]
+	if not utils.hasExpectedParams(expectedParams, request):
 		tripSquadAPI.logger.error("createAccount -- Required params not found in request")
 		abort(400)
  
+	requestParams = request.values
 	newAccount = Account.Account(requestParams["name"], requestParams["emailAddress"])
 	tripSquadAPI.logger.info("createAccount -- new Account: ID: %s, name: %s, email: %s" % (newAccount.AccountID, newAccount.name, newAccount.email))
 
