@@ -13,19 +13,19 @@ def homePage():
 def createAccount():
 	requestParams = request.values
 	if "name" not in requestParams or "emailAddress" not in requestParams:
-		print("createAccount -- Required params not found in request")
+		tripSquadAPI.logger.error("createAccount -- Required params not found in request")
 		abort(400)
  
 	newAccount = Account.Account(requestParams["name"], requestParams["emailAddress"])
-	print("createAccount -- new Account: ID: %s, name: %s, email: %s" % (newAccount.AccountID, newAccount.name, newAccount.email))
+	tripSquadAPI.logger.info("createAccount -- new Account: ID: %s, name: %s, email: %s" % (newAccount.AccountID, newAccount.name, newAccount.email))
 
 	if not Account.getAccountByID(newAccount.AccountID):
-		print("createAccount -- failure in db insertion")
+		tripSquadAPI.logger.error("createAccount -- failure in db insertion")
 		abort(500)
 	response = {"newAccountID" : newAccount.AccountID}
 	return json.jsonify(response)
 
-@tripSquadAPI.route('/account/<accountID>')
+@tripSquadAPI.route('/account/<accountID>/info')
 def getAccountInfo(accountID):
 
 	account = Account.getAccountByID(accountID)
