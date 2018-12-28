@@ -13,3 +13,10 @@ class Trip:
 		self.tripDescription = tripDescription
 
 		db.tripsByID[self.TripID] = self
+
+def getTripByID(TripID):
+
+	if TripID in db.tripsByID:
+		return db.tripsByID[tripID]
+	else:
+		return None

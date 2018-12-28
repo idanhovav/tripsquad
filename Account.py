@@ -12,3 +12,10 @@ class Account:
 		self.password = password
 
 		db.accountsByID[self.AccountID] = self
+
+def getAccountByID(AccountID):
+
+	if AccountID in db.accountsByID:
+		return db.accountsByID[AccountID]
+	else:
+		return None

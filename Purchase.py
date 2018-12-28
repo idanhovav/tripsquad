@@ -15,3 +15,9 @@ class Purchase:
 
 		db.purchasesByID[self.PurchaseID] = self
 
+def getPurchaseByID(PurchaseID):
+
+	if PurchaseID in db.purchasesByID:
+		return db.purchasesByID[PurchaseID]
+	else:
+		return None
