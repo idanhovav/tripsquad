@@ -33,12 +33,21 @@ class TestAPI(TestCase):
 
 	def testCreateAccount(self):
 		params = {"name": "Idan", "emailAddress": "idan@hovav.com"}
-		receivedResponse = requests.post(serverURL + "/account/create", data=params)
-		print(receivedResponse.text)
-		responseJson = receivedResponse.json()
-		newAccountID = responseJson["newAccountID"]
+		createAccountResponse = requests.post(serverURL + "/account/create", data=params)
+		print(createAccountResponse.text)
+		self.assertTrue(createAccountResponse.status_code == 200)
+		createAccountJson = createAccountResponse.json()
+		newAccountID = createAccountJson["accountID"]
 		print("AccountID: %s " % newAccountID)
 		self.assertTrue(newAccountID)
+
+		getAccountInfoResponse = requests.get(serverURL + "/account/" + newAccountID + "/info")
+		self.assertTrue(getAccountInfoResponse.status_code == 200)
+		getAccountInfoJson = getAccountInfoResponse.json()
+		expectedParams = ["name", "emailAddress", "accountID"]
+		self.assertTrue(all([param in getAccountInfoJson for param in expectedParams]))
+		self.assertTrue(getAccountInfoJson["name"] == params["name"])
+		self.assertTrue(getAccountInfoJson["emailAddress"] == params["emailAddress"])
 
 if __name__ == '__main__':
 	if len(sys.argv) == 2:

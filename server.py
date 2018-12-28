@@ -25,14 +25,20 @@ def createAccount():
 	if not Account.getAccountByID(newAccount.AccountID):
 		tripSquadAPI.logger.error("createAccount -- failure in db insertion")
 		abort(500)
-	response = {"newAccountID" : newAccount.AccountID}
+	response = {"accountID" : newAccount.AccountID}
 	return json.jsonify(response)
 
 @tripSquadAPI.route('/account/<accountID>/info')
 def getAccountInfo(accountID):
 
 	account = Account.getAccountByID(accountID)
-	return json.jsonify("Account ID: %s, Name: %s, Email: %s" % account.AccountID, account.name, account.email)
+	if not account:
+		tripSquadAPI.logger.error("getAccountInfo -- accountID %s not found" % accountID)
+		abort(500)
+
+	tripSquadAPI.logger.info("Account ID: %s, Name: %s, Email: %s" % account.AccountID, account.name, account.email)
+	accountInfo = {"accountID" : account.AccountID, "name": account.name, "emailAddress": account.email}
+	return json.jsonify(accountInfo)
 
 @tripSquadAPI.route('/trip/create', methods=["POST"])
 def createTrip():
