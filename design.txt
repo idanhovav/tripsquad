@@ -5,3 +5,5 @@ A trip consists of one or more people (squad) and a set of purchases. Each purch
 A purchase consists of a person and a dollar amount, and represents a purchase made by that person for that given dollar amount. Purchases can optionally have a tag, description, and are given a timestamp
 
 
+TODO:
+change Trip/Account/PurchaseID to ID
