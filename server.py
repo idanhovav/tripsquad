@@ -101,4 +101,15 @@ def addPurchase(tripID):
 @tripSquadAPI.route('/trip/<tripID>/getTotal')
 def getTripTotal(tripID):
 
-    return json.jsonify("get trip total endpoint")
+    trip = Trip.getTripByID(tripID)
+    if not trip:
+        tripSquadAPI.logger.error("getTripTotal -- %s trip not validated" % tripID)
+        abort(400)
+
+    tripPurchases = Purchase.getPurchasesByTripID(trip.TripID)
+    # TODO: totalPurchasesByPerson = Purchases.getPurchasesByPerson(totalPurchases)
+    totalPurchaseSum = sum([int(purchase.purchaseAmount) for purchase in tripPurchases])
+
+    response = {"tripID": tripID, "total": totalPurchaseSum}
+
+    return json.jsonify(response)
