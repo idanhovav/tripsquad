@@ -79,6 +79,28 @@ class TestAPI(TestCase):
         purchaseID = addPurchaseResponse.json()["purchaseID"]
         self.assertTrue(purchaseID)
 
+    def testGetTripTotal(self):
+        createOwnerParams = {"name": "Idan", "emailAddress": "idan@hovav.com", "password": "abcdef"}
+        createAccountParams = [{"name": "Bob", "emailAddress": "Bob@billy.com"}, {"name": "Jim", "emailAddress": "Jim@john.com"}]
+        createOwnerResponse = requests.post(serverURL + "/account/create", data=createOwnerParams)
+        createAccountResponses = [requests.post(serverURL + "/account/create", data=createAccountParam) for createAccountParam in createAccountParams]
+        ownerAccountID = createOwnerResponse.json()["accountID"]
+        accountIDs = [createAccountResponse.json()["accountID"] for createAccountResponse in createAccountResponses]
+        tripMemberAccountIDs = ",".join([ownerAccountID] + accountIDs)
+        createTripParams = {"creatorAccountID": ownerAccountID, "creatorAccountPassword": "abcdef", "tripName": "test", "tripMemberAccountIDs": tripMemberAccountIDs}
+        createTripResponse = requests.post(serverURL + "/trip/create", data=createTripParams)
+        tripID = createTripResponse.json()["tripID"]
+
+        addPurchaseParams = [{"purchaserAccountID": accountIDs[0], "purchaseAmount": 23, "description": "gas"}, {"purchaserAccountID": accountIDs[1], "purchaseAmount": 100, "description": "lodging"}]
+
+        addPurchaseResponses = [requests.post(serverURL + "/trip/" + tripID + "/addPurchase", data=addPurchaseParam) for addPurchaseParam in addPurchaseParams]
+        purchaseIDs = [addPurchaseResponse.json()["purchaseID"] for addPurchaseResponse in addPurchaseResponses]
+
+        getTotalResponse = requests.get(serverURL + "/trip/" + tripID + "/getTotal")
+        self.assertTrue(getTotalResponse.status_code == 200)
+        tripTotal = getTotalResponse.json()["total"]
+        self.assertTrue(tripTotal == 123)
+
 if __name__ == '__main__':
     if len(sys.argv) == 2:
         sleepTimer = int(sys.argv[1])
