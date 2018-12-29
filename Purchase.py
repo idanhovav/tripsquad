@@ -1,12 +1,12 @@
 import uuid
-import time
+import datetime as dt
 import db
 
 class Purchase:
 
     def __init__(self, AccountID, TripID, purchaseAmount, tag = "", description = ""):
         self.PurchaseID = str(uuid.uuid4())
-        self.timeStamp = time.time()
+        self.timeStamp = str(dt.datetime.today())
         self.AccountID = AccountID
         self.TripID = TripID
         self.purchaseAmount = purchaseAmount

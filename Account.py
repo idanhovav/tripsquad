@@ -1,12 +1,12 @@
 import uuid
-import time
+import datetime as dt
 import db
 
 class Account:
 
     def __init__(self, name, email, password = None):
         self.AccountID = str(uuid.uuid4())
-        self.timeStamp = time.time()
+        self.timeStamp = str(dt.datetime.today())
         self.name = name
         self.email = email
         self.password = password
