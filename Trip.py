@@ -17,6 +17,6 @@ class Trip:
 def getTripByID(TripID):
 
 	if TripID in db.tripsByID:
-		return db.tripsByID[tripID]
+		return db.tripsByID[TripID]
 	else:
 		return None
