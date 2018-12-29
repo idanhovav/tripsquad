@@ -21,3 +21,7 @@ def getPurchaseByID(PurchaseID):
         return db.purchasesByID[PurchaseID]
     else:
         return None
+
+def getPurchasesByTripID(TripID):
+
+    return [purchase for purchase in db.purchasesByID.values if purchase.TripID == TripID]
