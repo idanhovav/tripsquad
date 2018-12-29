@@ -57,7 +57,7 @@ def createTrip():
         tripSquadAPI.logger.error("createTrip -- %s User not validated" % creatorAccountID)
         abort(400)
     tripName = requestParams["tripName"]
-    tripMemberAccountIDs = requestParams["tripMemberAccountIDs"]
+    tripMemberAccountIDs = requestParams["tripMemberAccountIDs"].split(",")
     newTrip = Trip.Trip(tripMemberAccountIDs, tripName=tripName)
 
     if not Trip.getTripByID(newTrip.TripID):
@@ -66,15 +66,37 @@ def createTrip():
     response = {"tripID": newTrip.TripID}
     return json.jsonify(response)
 
+# TODO add some authorization or limitation to who can reach this endpoint
 @tripSquadAPI.route('/trip/<tripID>/addPurchase', methods=["POST"])
 def addPurchase(tripID):
+    expectedParams = ["purchaserAccountID", "purchaseAmount"]
+    if not utils.hasExpectedParams(expectedParams, request):
+        tripSquadAPI.logger.error("addPurchase -- Required params not found in request")
+        abort(400)
 
-    requestJson = request.get_json()
-    if "purchaseAmount" not in requestJson or "accountID" not in requestJson:
-        return json.jsonify("404 must include 'purchaseAmount' and 'accountID'")
+    trip = Trip.getTripByID(tripID)
+    if not trip:
+        tripSquadAPI.logger.error("addPurchase -- %s trip not validated" % tripID)
+        abort(400)
+
+    requestParams = request.values
+    purchaserAccountID = requestParams["purchaserAccountID"]
+    purchaseAmount = requestParams["purchaseAmount"]
+    purchaseDescription = requestParams["description"] if "description" in requestParams else None
 
 
-    return json.jsonify("add purchase endpoint")
+    if not purchaserAccountID in trip.AccountIDs:
+        tripSquadAPI.logger.error("addPurchase -- %s ID not validated" % purchaserAccountID)
+        abort(400)
+
+    newPurchase = Purchase.Purchase(purchaserAccountID, tripID, purchaseAmount, description=purchaseDescription)
+
+    if not Purchase.getPurchaseByID(newPurchase.PurchaseID):
+        tripSquadAPI.logger.error("addPurchase -- failure in db insertion")
+        abort(500)
+
+    response = {"purchaseID": newPurchase.PurchaseID}
+    return json.jsonify(response)
 
 @tripSquadAPI.route('/trip/<tripID>/getTotal')
 def getTripTotal(tripID):
