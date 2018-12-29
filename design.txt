@@ -4,6 +4,7 @@ A trip consists of one or more people (squad) and a set of purchases. Each purch
 
 A purchase consists of a person and a dollar amount, and represents a purchase made by that person for that given dollar amount. Purchases can optionally have a tag, description, and are given a timestamp
 
+storing totalPurchaseAmt per trip member. Update it every time creating a new purchase?
 
 TODO:
 change Trip/Account/PurchaseID to ID
@@ -18,3 +19,6 @@ create actual database
 put endpoint functions as lambda functions on AWS
 use AWS API gateway instead of flask
 make createObject function in each class file
+hash passwords with salt and store in db
+create utils file for interacting with db
+create TripMember.py
