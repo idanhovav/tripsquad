@@ -49,6 +49,21 @@ class TestAPI(TestCase):
 		self.assertTrue(getAccountInfoJson["name"] == params["name"])
 		self.assertTrue(getAccountInfoJson["emailAddress"] == params["emailAddress"])
 
+	def testCreateTrip(self):
+		createOwnerParams = {"name": "Idan", "emailAddress": "idan@hovav.com", "password": "abcdef"}
+		createAccountParams = {"name": "Bob", "emailAddress": "Bob@billy.com"}
+		createOwnerResponse = requests.post(serverURL + "/account/create", data=createOwnerParams)
+		createAccountResponse = requests.post(serverURL + "/account/create", data=createAccountParams)
+		ownerAccountID = createOwnerResponse.json()["accountID"]
+		accountID = createAccountResponse.json()["accountID"]
+
+		createTripParams = {"creatorAccountID": ownerAccountID, "creatorAccountPassword": "abcdef", "tripName": "test", "tripMemberAccountIDs": [ownerAccountID, accountID]}
+		createTripResponse = requests.post(serverURL + "/trip/create", data=createTripParams)
+		self.assertTrue(createTripResponse.status_code == 200)
+		tripID = createTripResponse.json()["tripID"]
+		self.assertTrue(tripID)
+
+
 if __name__ == '__main__':
 	if len(sys.argv) == 2:
 		sleepTimer = int(sys.argv[1])
