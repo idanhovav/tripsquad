@@ -7,3 +7,14 @@ A purchase consists of a person and a dollar amount, and represents a purchase m
 
 TODO:
 change Trip/Account/PurchaseID to ID
+require authentication for all endpoints
+create README
+allow removal of purchases
+allow addition of people to a trip
+allow getting total per person
+allow getting payments between people on a trip to get total
+allow putting a tag on a purchase
+create actual database
+put endpoint functions as lambda functions on AWS
+use AWS API gateway instead of flask
+make createObject function in each class file
