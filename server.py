@@ -19,7 +19,9 @@ def createAccount():
 		abort(400)
  
 	requestParams = request.values
-	newAccount = Account.Account(requestParams["name"], requestParams["emailAddress"])
+	password = requestParams["password"] if "password" in requestParams else None
+
+	newAccount = Account.Account(requestParams["name"], requestParams["emailAddress"], password)
 	tripSquadAPI.logger.info("createAccount -- new Account: ID: %s, name: %s, email: %s" % (newAccount.AccountID, newAccount.name, newAccount.email))
 
 	if not Account.getAccountByID(newAccount.AccountID):
