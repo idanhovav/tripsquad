@@ -36,21 +36,21 @@ def getAccountInfo(accountID):
 		tripSquadAPI.logger.error("getAccountInfo -- accountID %s not found" % accountID)
 		abort(500)
 
-	tripSquadAPI.logger.info("Account ID: %s, Name: %s, Email: %s" % account.AccountID, account.name, account.email)
+	tripSquadAPI.logger.info("Account ID: %s, Name: %s, Email: %s" % (account.AccountID, account.name, account.email))
 	accountInfo = {"accountID" : account.AccountID, "name": account.name, "emailAddress": account.email}
 	return json.jsonify(accountInfo)
 
 # TODO: add better auth for trip creation
 @tripSquadAPI.route('/trip/create', methods=["POST"])
 def createTrip():
-	expectedParams = ["creatorAccountID", "accountPassword", "tripName", "tripMemberAccountIDs"]
+	expectedParams = ["creatorAccountID", "creatorAccountPassword", "tripName", "tripMemberAccountIDs"]
 	if not utils.hasExpectedParams(expectedParams, request):
 		tripSquadAPI.logger.error("createTrip -- Required params not found in request")
 		abort(400)
 
 	requestParams = request.values
 	creatorAccountID = requestParams["creatorAccountID"]
-	creatorPassword = requestParams["creatorPassword"]
+	creatorPassword = requestParams["creatorAccountPassword"]
 	if not Account.validateAccount(creatorAccountID, creatorPassword):
 		tripSquadAPI.logger.error("createTrip -- %s User not validated" % creatorAccountID)
 		abort(400)
