@@ -7,23 +7,31 @@ A purchase consists of a person and a dollar amount, and represents a purchase m
 storing totalPurchaseAmt per trip member. Update it every time creating a new purchase?
 
 TODO:
-create README
-allow removal of purchases
-allow addition of people to a trip
-allow getting total per person
-allow getting payments between people on a trip to get total
-allow putting a tag on a purchase
+
+high:
+
 create actual database
-put endpoint functions as lambda functions on AWS
-use AWS API gateway instead of flask
-make createObject function in each class file
 create utils file for interacting with db
 test database for correct values in testAPI
+
+med:
+
+create README
+allow getting total per person
+allow getting payments between people on a trip to get total
+put endpoint functions as lambda functions on AWS
+use AWS API gateway instead of flask
+check uniqueness of Account email before account creation
+
+low:
+
+allow removal of purchases
+allow addition of people to a trip
+allow putting a tag on a purchase
 create base Object class that's extended by custom objects
 find some atomicity solution for db transactions that have multiple parts:
 	- creating a purchase & updating a TripMember's total
 	- creating a trip and tripMembers
-check uniqueness of Account email before account creation
 find better authentication format for endpoints
 	- dont send password in plaintext
 	- allow cookies?
