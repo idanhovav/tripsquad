@@ -13,16 +13,14 @@ def homePage():
 
 @tripSquadAPI.route('/account/create', methods=["POST"])
 def createAccount():
-    expectedParams = ["name", "emailAddress"]
-    if not utils.hasExpectedParams(expectedParams, request):
+    requiredParams = ["name", "emailAddress"]
+    if not utils.hasExpectedParams(requiredParams, request):
         tripSquadAPI.logger.error("createAccount -- Required params not found in request")
         abort(400)
- 
-    requestParams = request.values
-    accountName = requestParams["name"]
-    accountEmail = requestParams["emailAddress"]
-    password = requestParams["password"] if "password" in requestParams else None
-    newAccount = Account.createAccount(accountName, accountEmail, password)
+    allParams = requiredParams + ["password"]
+
+    (accountName, accountEmail, accountPassword) = utils.parseParams(allParams, request)
+    newAccount = Account.createAccount(accountName, accountEmail, accountPassword)
 
     if not newAccount:
         tripSquadAPI.logger.error("createAccount -- failure in db insertion")
@@ -52,14 +50,13 @@ def createTrip():
         tripSquadAPI.logger.error("createTrip -- Required params not found in request")
         abort(400)
 
-    requestParams = request.values
-    creatorAccountID = requestParams["creatorAccountID"]
-    creatorPassword = requestParams["creatorAccountPassword"]
+    (creatorAccountID, creatorPassword, tripName, tripMemberAccountIDsStr) = utils.parseParams(expectedParams, request)
+    tripMemberAccountIDs = tripMemberAccountIDsStr.split(",")
+
     if not Account.validateAccount(creatorAccountID, creatorPassword):
         tripSquadAPI.logger.error("createTrip -- %s User not validated" % creatorAccountID)
         abort(400)
-    tripName = requestParams["tripName"]
-    tripMemberAccountIDs = requestParams["tripMemberAccountIDs"].split(",")
+
     newTrip = Trip.Trip(tripMemberAccountIDs, tripName=tripName)
 
     if not Trip.getTripByID(newTrip.ID):
@@ -71,8 +68,8 @@ def createTrip():
 # TODO add some authorization or limitation to who can reach this endpoint
 @tripSquadAPI.route('/trip/<tripID>/addPurchase', methods=["POST"])
 def addPurchase(tripID):
-    expectedParams = ["purchaserAccountID", "purchaseAmount"]
-    if not utils.hasExpectedParams(expectedParams, request):
+    requiredParams = ["purchaserAccountID", "purchaseAmount"]
+    if not utils.hasExpectedParams(requiredParams, request):
         tripSquadAPI.logger.error("addPurchase -- Required params not found in request")
         abort(400)
 
@@ -81,17 +78,14 @@ def addPurchase(tripID):
         tripSquadAPI.logger.error("addPurchase -- %s trip not validated" % tripID)
         abort(400)
 
-    requestParams = request.values
-    purchaseAmountStr = requestParams["purchaseAmount"]
+    allParams = requiredParams + ["description"]
+    (purchaserAccountID, purchaseAmountStr, purchaseDescription) = utils.parseParams(allParams, request)
     purchaseAmount = 0
     try:
         purchaseAmount = int(purchaseAmountStr)
     except ValueError:
         tripSquadAPI.logger.error("addPurchase -- %s purchaseAmount not valid" % purchaseAmountStr)
         abort(400)
-
-    purchaserAccountID = requestParams["purchaserAccountID"]
-    purchaseDescription = requestParams["description"] if "description" in requestParams else None
 
     tripMemberID = TripMember.getTripMemberID(purchaserAccountID, tripID)
 

@@ -5,4 +5,10 @@ def hasExpectedParams(expectedParams, request):
 
     return True
 
+# Returns required and optional params
+# If optional param not present, default value is None
+def parseParams(expectedParams, request):
+
+    return [request.values[param] if param in request.values else None for param in expectedParams]
+
 IDCharSeparator = "~"
