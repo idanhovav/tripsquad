@@ -13,13 +13,12 @@ def homePage():
 
 @tripSquadAPI.route('/account/create', methods=["POST"])
 def createAccount():
-    requiredParams = ["name", "emailAddress"]
+    requiredParams = ["name", "emailAddress", "password"]
     if not utils.hasExpectedParams(requiredParams, request):
         tripSquadAPI.logger.error("createAccount -- Required params not found in request")
         abort(400)
-    allParams = requiredParams + ["password"]
 
-    (accountName, accountEmail, accountPassword) = utils.parseParams(allParams, request)
+    (accountName, accountEmail, accountPassword) = utils.parseParams(requiredParams, request)
     newAccount = Account.createAccount(accountName, accountEmail, accountPassword)
 
     if not newAccount:

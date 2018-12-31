@@ -40,7 +40,7 @@ def validateAccount(accountID, password):
 
     return account.isPassword(password)
 
-def createAccount(name, email, password=None):
+def createAccount(name, email, password):
     newAccount = Account(name, email, password)
 
     return newAccount if newAccount.writeToDB() else None

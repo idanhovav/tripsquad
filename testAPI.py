@@ -32,7 +32,7 @@ class TestAPI(TestCase):
 
 
     def testCreateAccount(self):
-        params = {"name": "Idan", "emailAddress": "idan@hovav.com"}
+        params = {"name": "Idan", "emailAddress": "idan@hovav.com", "password": "abcdef"}
         createAccountResponse = requests.post(serverURL + "/account/create", data=params)
         self.assertTrue(createAccountResponse.status_code == 200)
         createAccountJson = createAccountResponse.json()
@@ -49,7 +49,7 @@ class TestAPI(TestCase):
 
     def testCreateTrip(self):
         createOwnerParams = {"name": "Idan", "emailAddress": "idan@hovav.com", "password": "abcdef"}
-        createAccountParams = {"name": "Bob", "emailAddress": "Bob@billy.com"}
+        createAccountParams = {"name": "Bob", "emailAddress": "Bob@billy.com", "password": "ghiklm"}
         createOwnerResponse = requests.post(serverURL + "/account/create", data=createOwnerParams)
         createAccountResponse = requests.post(serverURL + "/account/create", data=createAccountParams)
         ownerAccountID = createOwnerResponse.json()["accountID"]
@@ -63,7 +63,7 @@ class TestAPI(TestCase):
 
     def testAddPurchase(self):
         createOwnerParams = {"name": "Idan", "emailAddress": "idan@hovav.com", "password": "abcdef"}
-        createAccountParams = [{"name": "Bob", "emailAddress": "Bob@billy.com"}, {"name": "Jim", "emailAddress": "Jim@john.com"}]
+        createAccountParams = [{"name": "Bob", "emailAddress": "Bob@billy.com", "password": "ghiklm"}, {"name": "Jim", "emailAddress": "Jim@john.com", "password": "nopqrs"}]
         createOwnerResponse = requests.post(serverURL + "/account/create", data=createOwnerParams)
         createAccountResponses = [requests.post(serverURL + "/account/create", data=createAccountParam) for createAccountParam in createAccountParams]
         ownerAccountID = createOwnerResponse.json()["accountID"]
@@ -81,7 +81,7 @@ class TestAPI(TestCase):
 
     def testGetTripTotal(self):
         createOwnerParams = {"name": "Idan", "emailAddress": "idan@hovav.com", "password": "abcdef"}
-        createAccountParams = [{"name": "Bob", "emailAddress": "Bob@billy.com"}, {"name": "Jim", "emailAddress": "Jim@john.com"}]
+        createAccountParams = [{"name": "Bob", "emailAddress": "Bob@billy.com", "password": "ghiklm"}, {"name": "Jim", "emailAddress": "Jim@john.com", "password": "nopqrs"}]
         createOwnerResponse = requests.post(serverURL + "/account/create", data=createOwnerParams)
         createAccountResponses = [requests.post(serverURL + "/account/create", data=createAccountParam) for createAccountParam in createAccountParams]
         ownerAccountID = createOwnerResponse.json()["accountID"]
