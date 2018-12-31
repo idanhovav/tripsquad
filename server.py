@@ -59,7 +59,6 @@ def createTrip():
 
     [creatorAccountID, creatorPassword, tripName, tripMemberAccountIDsStr] = utils.parseParams(expectedParams, request)
     tripMemberAccountIDs = tripMemberAccountIDsStr.split(",")
-
     if not Account.validateAccount(creatorAccountID, creatorPassword):
         tripSquadAPI.logger.error("createTrip -- %s User not validated" % creatorAccountID)
         abort(400)
@@ -120,7 +119,6 @@ def getTripTotal(tripID):
         abort(400)
 
     [accountID, password] = utils.parseParams(requiredParams, request)
-
     if not Account.validateAccount(accountID, password):
         tripSquadAPI.logger.error("getTripTotal -- Incorrect password given.")
         abort(400)
