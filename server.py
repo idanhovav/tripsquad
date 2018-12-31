@@ -57,11 +57,12 @@ def createTrip():
         tripSquadAPI.logger.error("createTrip -- %s User not validated" % creatorAccountID)
         abort(400)
 
-    newTrip = Trip.Trip(tripMemberAccountIDs, tripName=tripName)
+    newTrip = Trip.createTrip(tripMemberAccountIDs, tripName=tripName)
 
-    if not Trip.getTripByID(newTrip.ID):
+    if not newTrip:
         tripSquadAPI.logger.error("createTrip -- failure in db insertion")
         abort(500)
+
     response = {"tripID": newTrip.ID}
     return json.jsonify(response)
 
@@ -87,12 +88,11 @@ def addPurchase(tripID):
         tripSquadAPI.logger.error("addPurchase -- %s purchaseAmount not valid" % purchaseAmountStr)
         abort(400)
 
-    tripMemberID = TripMember.getTripMemberID(purchaserAccountID, tripID)
-
-    if not tripMemberID in trip.tripMemberIDs:
-        tripSquadAPI.logger.error("addPurchase -- %s ID not validated" % tripMemberID)
+    if not trip.includesAccount(purchaserAccountID):
+        tripSquadAPI.logger.error("addPurchase -- %s ID not validated" % purchaserAccountID)
         abort(400)
 
+    tripMemberID = TripMember.getTripMemberID(purchaserAccountID, tripID)
     newPurchase = Purchase.Purchase(tripMemberID, purchaseAmount, description=purchaseDescription)
 
     if not Purchase.getPurchaseByID(newPurchase.ID):
