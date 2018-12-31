@@ -51,7 +51,6 @@ def getAccountInfo(accountID):
     accountInfo = {"accountID" : account.ID, "name": account.name, "emailAddress": account.email}
     return json.jsonify(accountInfo)
 
-# TODO: add better auth for trip creation
 @tripSquadAPI.route('/trip/create', methods=["POST"])
 def createTrip():
     expectedParams = ["creatorAccountID", "creatorAccountPassword", "tripName", "tripMemberAccountIDs"]
@@ -75,7 +74,6 @@ def createTrip():
     response = {"tripID": newTrip.ID}
     return json.jsonify(response)
 
-# TODO add some authorization or limitation to who can reach this endpoint
 @tripSquadAPI.route('/trip/<tripID>/addPurchase', methods=["POST"])
 def addPurchase(tripID):
     requiredParams = ["purchaserAccountID", "purchaserAccountPassword", "purchaseAmount"]
