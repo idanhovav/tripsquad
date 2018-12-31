@@ -5,7 +5,7 @@ db_path = "main.db"
 conn = s.connect(db_path)
 c = conn.cursor()
 
-c.execute('''CREATE TABLE accounts (uid TEXT PRIMARY KEY, timeCreated TEXT, name TEXT, email TEXT UNIQUE, passwordHash TEXT)''')
+c.execute('''CREATE TABLE accounts (uid TEXT PRIMARY KEY, timeCreated TEXT, name TEXT, email TEXT UNIQUE, passwordHash TEXT, passwordSalt TEXT)''')
 c.execute('''CREATE TABLE trips (uid TEXT PRIMARY KEY, timeCreated TEXT, creatorAccountID FOREIGN KEY, name TEXT, description TEXT)''')
 c.execute('''CREATE TABLE trip_members (uid TEXT PRIMARY KEY, accountID FOREIGN KEY, tripID FOREIGN KEY, totalPurchaseAmt INTEGER)''')
 c.execute('''CREATE TABLE purchases (uid TEXT PRIMARY KEY, tripMemberID FOREIGN KEY, tripID FOREIGN KEY, purchaseAmt INTEGER, timeCreated TEXT, description TEXT)''')

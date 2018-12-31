@@ -1,15 +1,22 @@
 import uuid
 import datetime as dt
 import db
+import hashlib
+import os
+import binascii
+
+hashIterations = 100000
+saltLength = 64
+hashFunctionName = 'sha256'
 
 class Account:
-
     def __init__(self, name, email, password):
         self.ID = str(uuid.uuid4())
         self.timeStamp = str(dt.datetime.today())
         self.name = name
         self.email = email
-        self.password = password
+        self.passwordSalt = os.urandom(saltLength)
+        self.passwordHash = generateCryptographicHash(password, self.passwordSalt)
 
     # Returns true on successful insertion
     # dbFunction
@@ -20,13 +27,13 @@ class Account:
         return success
 
     def isPassword(self, givenPassword):
+        givenPasswordHash = generateCryptographicHash(givenPassword, self.passwordSalt)
+        return givenPasswordHash == self.passwordHash
 
-        return self.hasPassword() and self.password == givenPassword
+def generateCryptographicHash(password, salt):
+    generatedHash = hashlib.pbkdf2_hmac(hashFunctionName, bytearray(password, 'utf8'), salt, hashIterations)
 
-    def hasPassword(self):
-
-        return self.password != None
-
+    return str(binascii.hexlify(generatedHash))
 
 # dbFunction
 def getAccountByID(accountID):

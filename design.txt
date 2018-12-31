@@ -18,7 +18,6 @@ create actual database
 put endpoint functions as lambda functions on AWS
 use AWS API gateway instead of flask
 make createObject function in each class file
-hash passwords with salt and store in db
 create utils file for interacting with db
 test database for correct values in testAPI
 make all accounts have a password
