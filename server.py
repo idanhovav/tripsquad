@@ -18,7 +18,7 @@ def createAccount():
         tripSquadAPI.logger.error("createAccount -- Required params not found in request")
         abort(400)
 
-    (accountName, accountEmail, accountPassword) = utils.parseParams(requiredParams, request)
+    [accountName, accountEmail, accountPassword] = utils.parseParams(requiredParams, request)
     newAccount = Account.createAccount(accountName, accountEmail, accountPassword)
 
     if not newAccount:
@@ -59,7 +59,7 @@ def createTrip():
         tripSquadAPI.logger.error("createTrip -- Required params not found in request")
         abort(400)
 
-    (creatorAccountID, creatorPassword, tripName, tripMemberAccountIDsStr) = utils.parseParams(expectedParams, request)
+    [creatorAccountID, creatorPassword, tripName, tripMemberAccountIDsStr] = utils.parseParams(expectedParams, request)
     tripMemberAccountIDs = tripMemberAccountIDsStr.split(",")
 
     if not Account.validateAccount(creatorAccountID, creatorPassword):
@@ -84,7 +84,7 @@ def addPurchase(tripID):
         abort(400)
 
     allParams = requiredParams + ["description"]
-    (purchaserAccountID, purchaserAccountPassword, purchaseAmountStr, purchaseDescription) = utils.parseParams(allParams, request)
+    [purchaserAccountID, purchaserAccountPassword, purchaseAmountStr, purchaseDescription] = utils.parseParams(allParams, request)
     purchaseAmount = 0
     try:
         purchaseAmount = int(purchaseAmountStr)
@@ -122,7 +122,7 @@ def getTripTotal(tripID):
         tripSquadAPI.logger.error("getTripTotal -- Required params not found in request")
         abort(400)
 
-    (accountID, password) = utils.parseParams(requiredParams, request)
+    [accountID, password] = utils.parseParams(requiredParams, request)
 
     if not Account.validateAccount(accountID, password):
         tripSquadAPI.logger.error("getTripTotal -- Incorrect password given.")
