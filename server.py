@@ -37,7 +37,6 @@ def getAccountInfo(accountID):
         abort(400)
 
     [password] = utils.parseParams(requiredParams, request)
-    print("%s" % password)
     if not Account.validateAccount(accountID, password):
         tripSquadAPI.logger.error("getAccountInfo -- Incorrect password given.")
         abort(400)
