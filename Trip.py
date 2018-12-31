@@ -5,11 +5,10 @@ import TripMember
 
 class Trip:
 
-    def __init__(self, accountIDs, tripName, tripDescription):
+    def __init__(self, tripName, tripDescription):
         self.ID = str(uuid.uuid4())
         self.timeStamp = str(dt.datetime.today())
-        tripMembers =  set([TripMember.TripMember(accountID, self.ID) for accountID in accountIDs])
-        self.tripMemberIDs = [tripMember.ID for tripMember in tripMembers]
+        self.tripMemberIDs = []
         self.tripName = tripName
         self.tripDescription = tripDescription
 
@@ -32,6 +31,11 @@ def getTripByID(tripID):
         return None
 
 def createTrip(accountIDs, tripName, tripDescription=None):
-    newTrip = Trip(accountIDs, tripName, tripDescription)
+    newTrip = Trip(tripName, tripDescription)
+    tripMembers = [TripMember.createTripMember(accountID, newTrip.ID) for accountID in accountIDs]
+    if any([tripMember == None for tripMember in tripMembers]):
+        TripMember.removeTripMembersFromDB(tripMembers) # to keep transaction atomic
+        return None
 
+    newTrip.tripMemberIDs = [tripMember.ID for tripMember in tripMembers]
     return newTrip if newTrip.writeToDB() else None

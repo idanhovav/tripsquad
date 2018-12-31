@@ -9,7 +9,12 @@ class TripMember:
         self.accountID = accountID
         self.tripID = tripID
         self.totalPurchaseAmount = 0
+
+    def writeToDB(self):
         db.tripMembersByID[self.ID] = self
+        success = getTripMemberByID(self.ID) != None
+
+        return success
 
 def getTripMemberByID(tripMemberID):
 
@@ -30,3 +35,13 @@ def updateTripMemberTotal(tripMemberID, purchaseAmount):
     tripMember = getTripMemberByID(tripMemberID)
     tripMember.totalPurchaseAmount += purchaseAmount
     return True
+
+def createTripMember(accountID, tripID):
+    newTripMember = TripMember(accountID, tripID)
+
+    return newTripMember if newTripMember.writeToDB() else None
+
+def removeTripMembersFromDB(tripMembers):
+    for tripMember in tripMembers:
+        if tripMember.ID in db.tripMembersByID:
+            del db.tripMembersByID[tripMember.ID]
