@@ -1,4 +1,4 @@
-One account per person. An account must have a name and email address. The email address must be unique. Upon creation of an account, an account will be given a GUID and the person associated with the account will be prompted for a password. The password will be hashed and stored.
+One account per person. An account must have a name, email address, and password. The email address must be unique. Upon creation of an account, an account will be given a GUID. The password will be hashed and stored. Future improvement: Allow accounts to be created by others without a password and assigned purchases on a trip. Those accounts can then in the future be "claimed" by the person with that email address.
 
 A trip consists of one or more people (squad) and a set of purchases. Each purchase must be made by one person on the trip. 
 
@@ -20,4 +20,10 @@ use AWS API gateway instead of flask
 make createObject function in each class file
 hash passwords with salt and store in db
 create utils file for interacting with db
-test database for correct values
+test database for correct values in testAPI
+make all accounts have a password
+create base Object class that's extended by custom objects
+find some atomicity solution for db transactions that have multiple parts:
+	- creating a purchase & updating a TripMember's total
+	- creating a trip and tripMembers
+check uniqueness of Account email before account creation
