@@ -15,8 +15,6 @@ class Purchase:
         self.tag = tag
         self.description = description
 
-        db.purchasesByID[self.ID] = self
-
     # Returns true on successful insertion
     # dbFunction
     def writeToDB(self):
