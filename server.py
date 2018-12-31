@@ -38,7 +38,7 @@ def getAccountInfo(accountID):
 
     [password] = utils.parseParams(requiredParams, request)
     if not Account.validateAccount(accountID, password):
-        tripSquadAPI.logger.error("getAccountInfo -- Incorrect password given.")
+        tripSquadAPI.logger.error("getAccountInfo -- Incorrect accountID or password given.")
         abort(400)
 
     account = Account.getAccountByID(accountID)
@@ -98,7 +98,7 @@ def addPurchase(tripID):
         abort(400)
 
     if not trip.includesAccount(purchaserAccountID):
-        tripSquadAPI.logger.error("addPurchase -- %s ID not validated" % purchaserAccountID)
+        tripSquadAPI.logger.error("addPurchase -- %s ID not valid" % purchaserAccountID)
         abort(400)
 
     tripMemberID = TripMember.getTripMemberID(purchaserAccountID, tripID)
@@ -125,11 +125,11 @@ def getTripTotal(tripID):
 
     trip = Trip.getTripByID(tripID)
     if not trip:
-        tripSquadAPI.logger.error("getTripTotal -- %s trip not validated" % tripID)
+        tripSquadAPI.logger.error("getTripTotal -- %s trip not valid" % tripID)
         abort(400)
 
     if not trip.includesAccount(accountID):
-        tripSquadAPI.logger.error("addPurchase -- %s ID not validated" % accountID)
+        tripSquadAPI.logger.error("addPurchase -- %s ID not valid" % accountID)
         abort(400)
 
     tripPurchases = Purchase.getPurchasesByTripID(trip.ID)
