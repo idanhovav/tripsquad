@@ -18,12 +18,14 @@ class Purchase:
         db.purchasesByID[self.ID] = self
 
     # Returns true on successful insertion
+    # dbFunction
     def writeToDB(self):
         db.purchasesByID[self.ID] = self
         success = getPurchaseByID(self.ID) != None
 
         return success
 
+# dbFunction
 def getPurchaseByID(purchaseID):
 
     if purchaseID in db.purchasesByID:
@@ -31,10 +33,12 @@ def getPurchaseByID(purchaseID):
     else:
         return None
 
+# dbFunction
 def removePurchaseFromDB(purchaseID):
     if purchaseID in db.purchasesByID:
         del db.purchasesByID[purchaseID]
 
+# dbFunction
 def getPurchasesByTripID(tripID):
 
     return [purchase for purchase in db.purchasesByID.values() if purchase.tripID == tripID]

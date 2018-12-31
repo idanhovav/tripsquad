@@ -12,6 +12,7 @@ class Account:
         self.password = password
 
     # Returns true on successful insertion
+    # dbFunction
     def writeToDB(self):
         db.accountsByID[self.ID] = self
         success = getAccountByID(self.ID) != None
@@ -27,7 +28,7 @@ class Account:
         return self.password != None
 
 
-
+# dbFunction
 def getAccountByID(accountID):
     if accountID in db.accountsByID:
         return db.accountsByID[accountID]

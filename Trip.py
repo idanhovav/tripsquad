@@ -13,6 +13,7 @@ class Trip:
         self.tripDescription = tripDescription
 
     # Returns true on successful insertion
+    # dbFunction
     def writeToDB(self):
         db.tripsByID[self.ID] = self
         success = getTripByID(self.ID) != None
@@ -23,6 +24,7 @@ class Trip:
         tripMemberID = TripMember.getTripMemberID(accountID, self.ID)
         return tripMemberID in self.tripMemberIDs
 
+# dbFunction
 def getTripByID(tripID):
 
     if tripID in db.tripsByID:
