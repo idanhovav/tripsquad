@@ -1,6 +1,6 @@
 from flask import Flask, json, abort, request
 
-import Account, Trip, Purchase
+import Account, Trip, TripMember, Purchase
 
 import db, utils
 
@@ -80,16 +80,24 @@ def addPurchase(tripID):
         abort(400)
 
     requestParams = request.values
-    purchaserAccountID = requestParams["purchaserAccountID"]
-    purchaseAmount = requestParams["purchaseAmount"]
-    purchaseDescription = requestParams["description"] if "description" in requestParams else None
-
-
-    if not purchaserAccountID in trip.AccountIDs:
-        tripSquadAPI.logger.error("addPurchase -- %s ID not validated" % purchaserAccountID)
+    purchaseAmountStr = requestParams["purchaseAmount"]
+    purchaseAmount = 0
+    try:
+        purchaseAmount = int(purchaseAmountStr)
+    except ValueError:
+        tripSquadAPI.logger.error("addPurchase -- %s purchaseAmount not valid" % purchaseAmountStr)
         abort(400)
 
-    newPurchase = Purchase.Purchase(purchaserAccountID, tripID, purchaseAmount, description=purchaseDescription)
+    purchaserAccountID = requestParams["purchaserAccountID"]
+    purchaseDescription = requestParams["description"] if "description" in requestParams else None
+
+    tripMemberID = TripMember.getTripMemberID(purchaserAccountID, tripID)
+
+    if not tripMemberID in trip.tripMemberIDs:
+        tripSquadAPI.logger.error("addPurchase -- %s ID not validated" % tripMemberID)
+        abort(400)
+
+    newPurchase = Purchase.Purchase(tripMemberID, purchaseAmount, description=purchaseDescription)
 
     if not Purchase.getPurchaseByID(newPurchase.PurchaseID):
         tripSquadAPI.logger.error("addPurchase -- failure in db insertion")
