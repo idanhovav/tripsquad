@@ -4,3 +4,5 @@ def hasExpectedParams(expectedParams, request):
             return False
 
     return True
+
+IDCharSeparator = "~"
