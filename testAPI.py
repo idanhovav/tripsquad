@@ -32,20 +32,21 @@ class TestAPI(TestCase):
 
 
     def testCreateAccount(self):
-        params = {"name": "Idan", "emailAddress": "idan@hovav.com", "password": "abcdef"}
-        createAccountResponse = requests.post(serverURL + "/account/create", data=params)
+        createAccountParams = {"name": "Idan", "emailAddress": "idan@hovav.com", "password": "123456"}
+        createAccountResponse = requests.post(serverURL + "/account/create", data=createAccountParams)
         self.assertTrue(createAccountResponse.status_code == 200)
         createAccountJson = createAccountResponse.json()
         newAccountID = createAccountJson["accountID"]
         self.assertTrue(newAccountID)
 
-        getAccountInfoResponse = requests.get(serverURL + "/account/" + newAccountID + "/info")
+        getAccountInfoParams = {"password": "123456"}
+        getAccountInfoResponse = requests.post(serverURL + "/account/" + newAccountID + "/info", data=getAccountInfoParams)
         self.assertTrue(getAccountInfoResponse.status_code == 200)
         getAccountInfoJson = getAccountInfoResponse.json()
         expectedParams = ["name", "emailAddress", "accountID"]
         self.assertTrue(all([param in getAccountInfoJson for param in expectedParams]))
-        self.assertTrue(getAccountInfoJson["name"] == params["name"])
-        self.assertTrue(getAccountInfoJson["emailAddress"] == params["emailAddress"])
+        self.assertTrue(getAccountInfoJson["name"] == createAccountParams["name"])
+        self.assertTrue(getAccountInfoJson["emailAddress"] == createAccountParams["emailAddress"])
 
     def testCreateTrip(self):
         createOwnerParams = {"name": "Idan", "emailAddress": "idan@hovav.com", "password": "abcdef"}
@@ -55,7 +56,8 @@ class TestAPI(TestCase):
         ownerAccountID = createOwnerResponse.json()["accountID"]
         accountID = createAccountResponse.json()["accountID"]
 
-        createTripParams = {"creatorAccountID": ownerAccountID, "creatorAccountPassword": "abcdef", "tripName": "test", "tripMemberAccountIDs": [ownerAccountID, accountID]}
+        tripMemberAccountIDs = ",".join([ownerAccountID, accountID])
+        createTripParams = {"creatorAccountID": ownerAccountID, "creatorAccountPassword": "abcdef", "tripName": "test", "tripMemberAccountIDs": tripMemberAccountIDs}
         createTripResponse = requests.post(serverURL + "/trip/create", data=createTripParams)
         self.assertTrue(createTripResponse.status_code == 200)
         tripID = createTripResponse.json()["tripID"]
@@ -73,7 +75,7 @@ class TestAPI(TestCase):
         createTripResponse = requests.post(serverURL + "/trip/create", data=createTripParams)
         tripID = createTripResponse.json()["tripID"]
 
-        addPurchaseParams = {"purchaserAccountID": accountIDs[0], "purchaseAmount": 23, "description": "gas"}
+        addPurchaseParams = {"purchaserAccountID": accountIDs[0], "purchaserAccountPassword": "ghiklm", "purchaseAmount": 23, "description": "gas"}
         addPurchaseResponse = requests.post(serverURL + "/trip/" + tripID + "/addPurchase", data=addPurchaseParams)
         self.assertTrue(addPurchaseResponse.status_code == 200)
         purchaseID = addPurchaseResponse.json()["purchaseID"]
@@ -91,12 +93,13 @@ class TestAPI(TestCase):
         createTripResponse = requests.post(serverURL + "/trip/create", data=createTripParams)
         tripID = createTripResponse.json()["tripID"]
 
-        addPurchaseParams = [{"purchaserAccountID": accountIDs[0], "purchaseAmount": 23, "description": "gas"}, {"purchaserAccountID": accountIDs[1], "purchaseAmount": 100, "description": "lodging"}]
+        addPurchaseParams = [{"purchaserAccountID": accountIDs[0], "purchaserAccountPassword": "ghiklm", "purchaseAmount": 23, "description": "gas"}, {"purchaserAccountID": accountIDs[1], "purchaserAccountPassword": "nopqrs", "purchaseAmount": 100, "description": "lodging"}]
 
         addPurchaseResponses = [requests.post(serverURL + "/trip/" + tripID + "/addPurchase", data=addPurchaseParam) for addPurchaseParam in addPurchaseParams]
         purchaseIDs = [addPurchaseResponse.json()["purchaseID"] for addPurchaseResponse in addPurchaseResponses]
 
-        getTotalResponse = requests.get(serverURL + "/trip/" + tripID + "/getTotal")
+        getTotalParams = {"accountID": ownerAccountID, "password": "abcdef"}
+        getTotalResponse = requests.post(serverURL + "/trip/" + tripID + "/getTotal", data=getTotalParams)
         self.assertTrue(getTotalResponse.status_code == 200)
         tripTotal = getTotalResponse.json()["total"]
         self.assertTrue(tripTotal == 123)

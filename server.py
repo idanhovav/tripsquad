@@ -29,15 +29,25 @@ def createAccount():
     response = {"accountID" : newAccount.ID}
     return json.jsonify(response)
 
-@tripSquadAPI.route('/account/<accountID>/info')
+@tripSquadAPI.route('/account/<accountID>/info', methods=["POST"])
 def getAccountInfo(accountID):
+    requiredParams = ["password"]
+    if not utils.hasExpectedParams(requiredParams, request):
+        tripSquadAPI.logger.error("getAccountInfo -- Required params not found in request")
+        abort(400)
+
+    [password] = utils.parseParams(requiredParams, request)
+    print("%s" % password)
+    if not Account.validateAccount(accountID, password):
+        tripSquadAPI.logger.error("getAccountInfo -- Incorrect password given.")
+        abort(400)
 
     account = Account.getAccountByID(accountID)
     if not account:
         tripSquadAPI.logger.error("getAccountInfo -- accountID %s not found" % accountID)
         abort(500)
 
-    tripSquadAPI.logger.info("Account ID: %s, Name: %s, Email: %s" % (account.ID, account.name, account.email))
+    tripSquadAPI.logger.info("getAccountInfo -- Account ID: %s, Name: %s, Email: %s" % (account.ID, account.name, account.email))
     accountInfo = {"accountID" : account.ID, "name": account.name, "emailAddress": account.email}
     return json.jsonify(accountInfo)
 
@@ -68,23 +78,27 @@ def createTrip():
 # TODO add some authorization or limitation to who can reach this endpoint
 @tripSquadAPI.route('/trip/<tripID>/addPurchase', methods=["POST"])
 def addPurchase(tripID):
-    requiredParams = ["purchaserAccountID", "purchaseAmount"]
+    requiredParams = ["purchaserAccountID", "purchaserAccountPassword", "purchaseAmount"]
     if not utils.hasExpectedParams(requiredParams, request):
         tripSquadAPI.logger.error("addPurchase -- Required params not found in request")
         abort(400)
 
-    trip = Trip.getTripByID(tripID)
-    if not trip:
-        tripSquadAPI.logger.error("addPurchase -- %s trip not validated" % tripID)
-        abort(400)
-
     allParams = requiredParams + ["description"]
-    (purchaserAccountID, purchaseAmountStr, purchaseDescription) = utils.parseParams(allParams, request)
+    (purchaserAccountID, purchaserAccountPassword, purchaseAmountStr, purchaseDescription) = utils.parseParams(allParams, request)
     purchaseAmount = 0
     try:
         purchaseAmount = int(purchaseAmountStr)
     except ValueError:
         tripSquadAPI.logger.error("addPurchase -- %s purchaseAmount not valid" % purchaseAmountStr)
+        abort(400)
+
+    if not Account.validateAccount(purchaserAccountID, purchaserAccountPassword):
+        tripSquadAPI.logger.error("addPurchase -- %s User not validated" % purchaserAccountID)
+        abort(400) 
+
+    trip = Trip.getTripByID(tripID)
+    if not trip:
+        tripSquadAPI.logger.error("addPurchase -- %s trip not valid" % tripID)
         abort(400)
 
     if not trip.includesAccount(purchaserAccountID):
@@ -101,12 +115,26 @@ def addPurchase(tripID):
     response = {"purchaseID": newPurchase.ID}
     return json.jsonify(response)
 
-@tripSquadAPI.route('/trip/<tripID>/getTotal')
+@tripSquadAPI.route('/trip/<tripID>/getTotal', methods=["POST"])
 def getTripTotal(tripID):
+    requiredParams = ["accountID", "password"]
+    if not utils.hasExpectedParams(requiredParams, request):
+        tripSquadAPI.logger.error("getTripTotal -- Required params not found in request")
+        abort(400)
+
+    (accountID, password) = utils.parseParams(requiredParams, request)
+
+    if not Account.validateAccount(accountID, password):
+        tripSquadAPI.logger.error("getTripTotal -- Incorrect password given.")
+        abort(400)
 
     trip = Trip.getTripByID(tripID)
     if not trip:
         tripSquadAPI.logger.error("getTripTotal -- %s trip not validated" % tripID)
+        abort(400)
+
+    if not trip.includesAccount(accountID):
+        tripSquadAPI.logger.error("addPurchase -- %s ID not validated" % accountID)
         abort(400)
 
     tripPurchases = Purchase.getPurchasesByTripID(trip.ID)
