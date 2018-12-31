@@ -5,7 +5,7 @@ import hashlib
 import os
 import binascii
 
-hashIterations = 100000
+hashIterations = 10000
 saltLength = 64
 hashFunctionName = 'sha256'
 
