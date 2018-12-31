@@ -2,4 +2,4 @@
 accountsByID = {}
 tripsByID = {}
 purchasesByID = {}
-tripMemberByID = {}
+tripMembersByID = {}
