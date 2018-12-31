@@ -1,3 +1,5 @@
+APIListSeparator = ","
+
 def hasExpectedParams(expectedParams, request):
     for param in expectedParams:
         if not param in request.values:
@@ -11,4 +13,5 @@ def parseParams(expectedParams, request):
 
     return [request.values[param] if param in request.values else None for param in expectedParams]
 
-IDCharSeparator = "~"
+def parseAPIList(APIListStr):
+    return APIListStr.split(APIListSeparator)

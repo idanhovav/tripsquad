@@ -2,6 +2,8 @@ import datetime as dt
 import db
 import utils
 
+TripMemberIDSeparator = "~"
+
 class TripMember:
     def __init__(self, accountID, tripID):
         self.ID = getTripMemberID(accountID, tripID)
@@ -27,11 +29,11 @@ def getTripMemberByID(tripMemberID):
 
 def getTripAndAccountIDs(tripMemberID):
 
-    return tripMemberID.split(utils.IDCharSeparator)
+    return tripMemberID.split(TripMemberIDSeparator)
 
 def getTripMemberID(accountID, tripID):
 
-    return accountID + utils.IDCharSeparator + tripID
+    return accountID + TripMemberIDSeparator + tripID
 
 # dbFunction
 def updateTripMemberTotal(tripMemberID, purchaseAmount):

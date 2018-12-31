@@ -58,7 +58,7 @@ def createTrip():
         abort(400)
 
     [creatorAccountID, creatorPassword, tripName, tripMemberAccountIDsStr] = utils.parseParams(expectedParams, request)
-    tripMemberAccountIDs = tripMemberAccountIDsStr.split(",")
+    tripMemberAccountIDs = utils.parseAPIList(tripMemberAccountIDsStr)
     if not Account.validateAccount(creatorAccountID, creatorPassword):
         tripSquadAPI.logger.error("createTrip -- %s User not validated" % creatorAccountID)
         abort(400)
