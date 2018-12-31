@@ -5,20 +5,20 @@ import TripMember
 
 class Trip:
 
-    def __init__(self, AccountIDs, PurchaseIDs = [], tripName="", tripDescription=""):
-        self.TripID = str(uuid.uuid4())
+    def __init__(self, accountIDs, purchaseIDs = [], tripName="", tripDescription=""):
+        self.ID = str(uuid.uuid4())
         self.timeStamp = str(dt.datetime.today())
-        tripMembers =  set([TripMember.TripMember(accountID, self.TripID) for accountID in AccountIDs])
-        self.tripMemberIDs = [tripMember.TripMemberID for tripMember in tripMembers]
-        self.PurchaseIDs = list(set(PurchaseIDs)) # no repeats
+        tripMembers =  set([TripMember.TripMember(accountID, self.ID) for accountID in accountIDs])
+        self.tripMemberIDs = [tripMember.ID for tripMember in tripMembers]
+        self.purchaseIDs = list(set(purchaseIDs)) # no repeats
         self.tripName = tripName
         self.tripDescription = tripDescription
 
-        db.tripsByID[self.TripID] = self
+        db.tripsByID[self.ID] = self
 
-def getTripByID(TripID):
+def getTripByID(tripID):
 
-    if TripID in db.tripsByID:
-        return db.tripsByID[TripID]
+    if tripID in db.tripsByID:
+        return db.tripsByID[tripID]
     else:
         return None

@@ -3,18 +3,18 @@ import db
 import utils
 
 class TripMember:
-    def __init__(self, AccountID, TripID):
-        self.TripMemberID = getTripMemberID(AccountID, TripID)
+    def __init__(self, accountID, tripID):
+        self.ID = getTripMemberID(accountID, tripID)
         self.timeStamp = str(dt.datetime.today())
-        self.AccountID = AccountID
-        self.TripID = TripID
+        self.accountID = accountID
+        self.tripID = tripID
         self.totalPurchaseAmount = 0
-        db.tripMembersByID[self.TripMemberID] = self
+        db.tripMembersByID[self.ID] = self
 
-def getTripAndAccountIDs(TripMemberID):
+def getTripAndAccountIDs(tripMemberID):
 
-    return TripMemberID.split(utils.IDCharSeparator)
+    return tripMemberID.split(utils.IDCharSeparator)
 
-def getTripMemberID(AccountID, TripID):
+def getTripMemberID(accountID, tripID):
 
-    return AccountID + utils.IDCharSeparator + TripID
+    return accountID + utils.IDCharSeparator + tripID

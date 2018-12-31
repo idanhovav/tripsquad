@@ -6,25 +6,25 @@ import TripMember
 
 class Purchase:
 
-    def __init__(self, TripMemberID, purchaseAmount, tag = "", description = ""):
-        self.PurchaseID = str(uuid.uuid4())
+    def __init__(self, tripMemberID, purchaseAmount, tag = "", description = ""):
+        self.ID = str(uuid.uuid4())
         self.timeStamp = str(dt.datetime.today())
-        self.TripMemberID = TripMemberID
-        [self.AccountID, self.TripID] = TripMember.getTripAndAccountIDs(TripMemberID)
+        self.tripMemberID = tripMemberID
+        [self.accountID, self.tripID] = TripMember.getTripAndAccountIDs(tripMemberID)
         self.purchaseAmount = purchaseAmount
         self.tag = tag
         self.description = description
 
-        db.purchasesByID[self.PurchaseID] = self
-        db.tripMembersByID[self.TripMemberID].totalPurchaseAmount += self.purchaseAmount
+        db.purchasesByID[self.ID] = self
+        db.tripMembersByID[self.tripMemberID].totalPurchaseAmount += self.purchaseAmount
 
-def getPurchaseByID(PurchaseID):
+def getPurchaseByID(purchaseID):
 
-    if PurchaseID in db.purchasesByID:
-        return db.purchasesByID[PurchaseID]
+    if purchaseID in db.purchasesByID:
+        return db.purchasesByID[purchaseID]
     else:
         return None
 
-def getPurchasesByTripID(TripID):
+def getPurchasesByTripID(tripID):
 
-    return [purchase for purchase in db.purchasesByID.values() if purchase.TripID == TripID]
+    return [purchase for purchase in db.purchasesByID.values() if purchase.tripID == tripID]

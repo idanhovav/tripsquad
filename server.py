@@ -22,12 +22,12 @@ def createAccount():
     password = requestParams["password"] if "password" in requestParams else None
 
     newAccount = Account.Account(requestParams["name"], requestParams["emailAddress"], password)
-    tripSquadAPI.logger.info("createAccount -- new Account: ID: %s, name: %s, email: %s" % (newAccount.AccountID, newAccount.name, newAccount.email))
+    tripSquadAPI.logger.info("createAccount -- new Account: ID: %s, name: %s, email: %s" % (newAccount.ID, newAccount.name, newAccount.email))
 
-    if not Account.getAccountByID(newAccount.AccountID):
+    if not Account.getAccountByID(newAccount.ID):
         tripSquadAPI.logger.error("createAccount -- failure in db insertion")
         abort(500)
-    response = {"accountID" : newAccount.AccountID}
+    response = {"accountID" : newAccount.ID}
     return json.jsonify(response)
 
 @tripSquadAPI.route('/account/<accountID>/info')
@@ -38,8 +38,8 @@ def getAccountInfo(accountID):
         tripSquadAPI.logger.error("getAccountInfo -- accountID %s not found" % accountID)
         abort(500)
 
-    tripSquadAPI.logger.info("Account ID: %s, Name: %s, Email: %s" % (account.AccountID, account.name, account.email))
-    accountInfo = {"accountID" : account.AccountID, "name": account.name, "emailAddress": account.email}
+    tripSquadAPI.logger.info("Account ID: %s, Name: %s, Email: %s" % (account.ID, account.name, account.email))
+    accountInfo = {"accountID" : account.ID, "name": account.name, "emailAddress": account.email}
     return json.jsonify(accountInfo)
 
 # TODO: add better auth for trip creation
@@ -60,10 +60,10 @@ def createTrip():
     tripMemberAccountIDs = requestParams["tripMemberAccountIDs"].split(",")
     newTrip = Trip.Trip(tripMemberAccountIDs, tripName=tripName)
 
-    if not Trip.getTripByID(newTrip.TripID):
+    if not Trip.getTripByID(newTrip.ID):
         tripSquadAPI.logger.error("createTrip -- failure in db insertion")
         abort(500)
-    response = {"tripID": newTrip.TripID}
+    response = {"tripID": newTrip.ID}
     return json.jsonify(response)
 
 # TODO add some authorization or limitation to who can reach this endpoint
@@ -99,11 +99,11 @@ def addPurchase(tripID):
 
     newPurchase = Purchase.Purchase(tripMemberID, purchaseAmount, description=purchaseDescription)
 
-    if not Purchase.getPurchaseByID(newPurchase.PurchaseID):
+    if not Purchase.getPurchaseByID(newPurchase.ID):
         tripSquadAPI.logger.error("addPurchase -- failure in db insertion")
         abort(500)
 
-    response = {"purchaseID": newPurchase.PurchaseID}
+    response = {"purchaseID": newPurchase.ID}
     return json.jsonify(response)
 
 @tripSquadAPI.route('/trip/<tripID>/getTotal')
@@ -114,7 +114,7 @@ def getTripTotal(tripID):
         tripSquadAPI.logger.error("getTripTotal -- %s trip not validated" % tripID)
         abort(400)
 
-    tripPurchases = Purchase.getPurchasesByTripID(trip.TripID)
+    tripPurchases = Purchase.getPurchasesByTripID(trip.ID)
     # TODO: totalPurchasesByPerson = Purchases.getPurchasesByPerson(totalPurchases)
     totalPurchaseSum = sum([int(purchase.purchaseAmount) for purchase in tripPurchases])
 
