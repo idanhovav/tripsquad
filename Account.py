@@ -45,7 +45,7 @@ def getAccountByID(accountID):
 def validateAccount(accountID, password):
     account = getAccountByID(accountID)
 
-    return account.isPassword(password)
+    return account != None and account.isPassword(password)
 
 def createAccount(name, email, password):
     newAccount = Account(name, email, password)
