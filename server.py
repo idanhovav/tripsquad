@@ -19,14 +19,16 @@ def createAccount():
         abort(400)
  
     requestParams = request.values
+    accountName = requestParams["name"]
+    accountEmail = requestParams["emailAddress"]
     password = requestParams["password"] if "password" in requestParams else None
+    newAccount = Account.createAccount(accountName, accountEmail, password)
 
-    newAccount = Account.Account(requestParams["name"], requestParams["emailAddress"], password)
-    tripSquadAPI.logger.info("createAccount -- new Account: ID: %s, name: %s, email: %s" % (newAccount.ID, newAccount.name, newAccount.email))
-
-    if not Account.getAccountByID(newAccount.ID):
+    if not newAccount:
         tripSquadAPI.logger.error("createAccount -- failure in db insertion")
         abort(500)
+
+    tripSquadAPI.logger.info("createAccount -- new Account: ID: %s, name: %s, email: %s" % (newAccount.ID, newAccount.name, newAccount.email))
     response = {"accountID" : newAccount.ID}
     return json.jsonify(response)
 

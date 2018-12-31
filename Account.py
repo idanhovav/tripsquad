@@ -4,17 +4,31 @@ import db
 
 class Account:
 
-    def __init__(self, name, email, password = None):
+    def __init__(self, name, email, password):
         self.ID = str(uuid.uuid4())
         self.timeStamp = str(dt.datetime.today())
         self.name = name
         self.email = email
         self.password = password
 
+    # Returns true on successful insertion
+    def writeToDB(self):
         db.accountsByID[self.ID] = self
+        success = getAccountByID(self.ID) != None
+
+        return success
+
+    def isPassword(self, givenPassword):
+
+        return self.hasPassword() and self.password == givenPassword
+
+    def hasPassword(self):
+
+        return self.password != None
+
+
 
 def getAccountByID(accountID):
-
     if accountID in db.accountsByID:
         return db.accountsByID[accountID]
     else:
@@ -22,7 +36,10 @@ def getAccountByID(accountID):
 
 def validateAccount(accountID, password):
     account = getAccountByID(accountID)
-    if account and account.password:
-        return account.password == password
 
-    return False
+    return account.isPassword(password)
+
+def createAccount(name, email, password=None):
+    newAccount = Account(name, email, password)
+
+    return newAccount if newAccount.writeToDB() else None
