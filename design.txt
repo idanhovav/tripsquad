@@ -7,7 +7,6 @@ A purchase consists of a person and a dollar amount, and represents a purchase m
 storing totalPurchaseAmt per trip member. Update it every time creating a new purchase?
 
 TODO:
-change Trip/Account/PurchaseID to ID
 require authentication for all endpoints
 create README
 allow removal of purchases
@@ -21,4 +20,4 @@ use AWS API gateway instead of flask
 make createObject function in each class file
 hash passwords with salt and store in db
 create utils file for interacting with db
-create TripMember.py
+test database for correct values
