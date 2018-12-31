@@ -11,6 +11,13 @@ class TripMember:
         self.totalPurchaseAmount = 0
         db.tripMembersByID[self.ID] = self
 
+def getTripMemberByID(tripMemberID):
+
+    if tripMemberID in db.tripMembersByID:
+        return db.tripMembersByID[tripMemberID]
+    else:
+        return None
+
 def getTripAndAccountIDs(tripMemberID):
 
     return tripMemberID.split(utils.IDCharSeparator)
@@ -18,3 +25,8 @@ def getTripAndAccountIDs(tripMemberID):
 def getTripMemberID(accountID, tripID):
 
     return accountID + utils.IDCharSeparator + tripID
+
+def updateTripMemberTotal(tripMemberID, purchaseAmount):
+    tripMember = getTripMemberByID(tripMemberID)
+    tripMember.totalPurchaseAmount += purchaseAmount
+    return True

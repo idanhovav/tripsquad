@@ -6,7 +6,7 @@ import TripMember
 
 class Purchase:
 
-    def __init__(self, tripMemberID, purchaseAmount, tag = "", description = ""):
+    def __init__(self, tripMemberID, purchaseAmount, tag, description):
         self.ID = str(uuid.uuid4())
         self.timeStamp = str(dt.datetime.today())
         self.tripMemberID = tripMemberID
@@ -16,7 +16,13 @@ class Purchase:
         self.description = description
 
         db.purchasesByID[self.ID] = self
-        db.tripMembersByID[self.tripMemberID].totalPurchaseAmount += self.purchaseAmount
+
+    # Returns true on successful insertion
+    def writeToDB(self):
+        db.purchasesByID[self.ID] = self
+        success = getPurchaseByID(self.ID) != None
+
+        return success
 
 def getPurchaseByID(purchaseID):
 
@@ -25,6 +31,23 @@ def getPurchaseByID(purchaseID):
     else:
         return None
 
+def removePurchaseFromDB(purchaseID):
+    if purchaseID in db.purchasesByID:
+        del db.purchasesByID[purchaseID]
+
 def getPurchasesByTripID(tripID):
 
     return [purchase for purchase in db.purchasesByID.values() if purchase.tripID == tripID]
+
+def createPurchase(tripMemberID, purchaseAmount, tag=None, description=None):
+    newPurchase = Purchase(tripMemberID, purchaseAmount, tag, description)
+
+    if not newPurchase.writeToDB():
+        return None
+
+    if not TripMember.updateTripMemberTotal(tripMemberID, purchaseAmount):
+        removePurchaseFromDB(newPurchase.ID) # to keep transaction atomic
+        return None
+
+    return newPurchase
+

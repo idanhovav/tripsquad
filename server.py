@@ -93,9 +93,9 @@ def addPurchase(tripID):
         abort(400)
 
     tripMemberID = TripMember.getTripMemberID(purchaserAccountID, tripID)
-    newPurchase = Purchase.Purchase(tripMemberID, purchaseAmount, description=purchaseDescription)
+    newPurchase = Purchase.createPurchase(tripMemberID, purchaseAmount, description=purchaseDescription)
 
-    if not Purchase.getPurchaseByID(newPurchase.ID):
+    if not newPurchase:
         tripSquadAPI.logger.error("addPurchase -- failure in db insertion")
         abort(500)
 
